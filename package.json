@@ -1,0 +1,19 @@
+{
+  "name": "exercicio-com-laco",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx mocha",
+    "funcao": "node src/gestaoDeLivros.js",
+    "mochawesome": "npx mocha --reporter mochawesome"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "type": "module",
+  "dependencies": {
+    "mocha": "^11.7.5",
+    "mochawesome": "^7.1.4"
+  }
+}
