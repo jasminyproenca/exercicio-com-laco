@@ -20,7 +20,7 @@ exercicio-com-laco/
 │   └── gestaoDeLivros.test.js  # Testes automatizados com Mocha
 ├── .github/
 │   └── workflows/
-│       └── pipeline.yml        # Pipeline de CI com self-hosted runner
+│       └── executar-testes-self-hosted.yml  # Pipeline de CI com self-hosted runner
 ├── mochawesome-report/         # Relatórios HTML/JSON gerados (ignorado pelo git)
 ├── .gitignore
 ├── package.json
@@ -108,13 +108,17 @@ O relatório HTML é salvo em `mochawesome-report/mochawesome.html`.
 
 ---
 
-## 🔄 Integração Contínua (CI) — Exercício 3
+## 🔄 Integração Contínua (CI)
 
-### O que é um Self-Hosted Runner?
+Este projeto utiliza **GitHub Actions** com um **self-hosted runner** — a pipeline roda diretamente na máquina local, e não em servidores da nuvem do GitHub.
 
-Por padrão, plataformas de CI/CD como o GitHub Actions executam os jobs em **máquinas virtuais gerenciadas na nuvem** (cloud runners). Um **self-hosted runner** é uma máquina **própria** — local, servidor corporativo ou VM — registrada na plataforma para executar os jobs da pipeline.
+A cada push na branch `main`, a pipeline executa automaticamente:
 
-**Arquitetura deste projeto:**
+```
+npm install  →  npm test  →  npm run mochawesome
+```
+
+**Como funciona:**
 
 ```
 Máquina Local (Windows)
@@ -122,56 +126,31 @@ Máquina Local (Windows)
     └── Executa: npm install → npm test → npm run mochawesome
               ↕  comunica via HTTPS
 GitHub.com
-└── .github/workflows/pipeline.yml  (runs-on: self-hosted)
+└── .github/workflows/executar-testes-self-hosted.yml  (runs-on: self-hosted)
 ```
 
 ---
 
-### 🤔 Quando faz sentido usar Self-Hosted Runner?
+### ⚙️ Como reproduzir o self-hosted runner
 
-| Situação | Motivo |
-|----------|--------|
-| 🔒 Dados ou código sensível | O build não sai da rede interna |
-| 🖥️ Hardware específico | GPU, dispositivos ARM, iOS/Android físicos |
-| 💸 Alto volume de builds | Runners cloud cobram por minuto |
-| ⚡ Cache local | `node_modules` e Docker layers persistem entre builds |
-| 🏢 Serviços internos | Acesso a APIs ou bancos de dados sem VPN |
-
-**Quando NÃO usar:**
-- Projetos open source (runners gratuitos já são suficientes)
-- Times sem infraestrutura para manter servidores
-- Projetos com builds simples e baixa frequência
-
----
-
-### 🌐 Comparativo entre Plataformas
-
-| Plataforma | Recurso Equivalente | Observação |
-|------------|---------------------|------------|
-| **GitHub Actions** | Self-Hosted Runner | Suporta Linux, Windows, macOS |
-| **GitLab CI/CD** | GitLab Runner (self-managed) | Suporta Docker, Shell, Kubernetes |
-| **CircleCI** | Self-Hosted Runner | Disponível no plano Free |
-| **Azure DevOps** | Self-Hosted Agent | Integrado ao Azure Pipelines |
-| **Bitbucket Pipelines** | Runners (self-hosted) | Disponível em todos os planos |
-| **Jenkins** | Agent/Node | Jenkins **é** self-hosted por natureza |
-
----
-
-### ⚙️ Configuração do Self-Hosted Runner (Windows)
+#### Pré-requisitos
+- Windows 10/11
+- Conta no GitHub com acesso ao repositório
+- Node.js instalado
 
 #### 1. Criar diretório e baixar o runner
 
 ```powershell
 mkdir C:\actions-runner
 cd C:\actions-runner
-Invoke-WebRequest -Uri https://github.com/actions/runner/releases/download/v2.323.0/actions-runner-win-x64-2.323.0.zip -OutFile actions-runner-win-x64.zip
+Invoke-WebRequest -Uri https://github.com/actions/runner/releases/latest/download/actions-runner-win-x64.zip -OutFile actions-runner-win-x64.zip
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 [System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD\actions-runner-win-x64.zip", "$PWD")
 ```
 
 #### 2. Obter o token de registro
 
-No GitHub: **Settings → Actions → Runners → New self-hosted runner → Windows**
+No GitHub: **Settings do repositório → Actions → Runners → New self-hosted runner → Windows**
 
 #### 3. Registrar o runner
 
@@ -185,10 +164,12 @@ No GitHub: **Settings → Actions → Runners → New self-hosted runner → Win
 # Rodar manualmente (sessão única)
 .\run.cmd
 
-# OU instalar como serviço do Windows (recomendado)
+# OU instalar como serviço do Windows (inicia automaticamente com o sistema)
 .\svc.cmd install
 .\svc.cmd start
 ```
+
+Após iniciado, o runner fica escutando jobs. Qualquer push para `main` dispara a pipeline automaticamente.
 
 ---
 

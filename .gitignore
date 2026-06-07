@@ -22,3 +22,6 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Relatórios de exercício (arquivos locais)
+relatorio-*.html
