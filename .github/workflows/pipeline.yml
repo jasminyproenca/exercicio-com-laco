@@ -1,0 +1,27 @@
+name: CI - Self-Hosted Runner
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  testes:
+    name: Executar Testes (Self-Hosted)
+    runs-on: self-hosted
+
+    steps:
+      - name: 🔍 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: 📦 Instalar dependências
+        run: npm install
+
+      - name: 🧪 Executar testes
+        run: npm test
+
+      - name: 📊 Gerar relatório Mochawesome
+        run: npm run mochawesome
