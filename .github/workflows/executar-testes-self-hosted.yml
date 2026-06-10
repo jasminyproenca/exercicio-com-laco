@@ -10,18 +10,18 @@ on:
 
 jobs:
   testes:
-    name: Executar Testes (Self-Hosted)
+    name: Executar Testes na Máquina Local
     runs-on: self-hosted
 
     steps:
-      - name: 🔍 Checkout do código
+      - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: 📦 Instalar dependências
+      - name: Instalar dependências
         run: npm install
 
-      - name: 🧪 Executar testes
+      - name: Executar testes
         run: npm test
 
-      - name: 📊 Gerar relatório Mochawesome
+      - name: Gerar relatório Mochawesome
         run: npm run mochawesome
